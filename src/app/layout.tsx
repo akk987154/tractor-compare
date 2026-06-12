@@ -40,6 +40,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             `,
           }}
         />
+        {/* JSON-LD 结构化数据 — 帮助搜索引擎理解网站性质 */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              name: "TractorCompare",
+              description:
+                "免费在线对比 John Deere、Kubota、Massey Ferguson、Case IH、New Holland 等主流品牌拖拉机规格参数。",
+              url: "https://tractorcompare.vercel.app",
+              applicationCategory: "BusinessApplication",
+              operatingSystem: "Web",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "CNY",
+              },
+            }),
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col">
         <Header />

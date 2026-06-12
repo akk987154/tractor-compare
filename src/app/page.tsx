@@ -45,15 +45,7 @@ export default function Home() {
         <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-xl mx-auto mb-8">
           并排对比 John Deere、Kubota、Massey Ferguson、Case IH、New Holland 等主流品牌的关键规格参数
         </p>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (filtered.length >= 2) {
-              router.push(`/compare?left=${filtered[0].id}&right=${filtered[1].id}`);
-            }
-          }}
-          className="flex items-center max-w-md mx-auto gap-2"
-        >
+        <div className="flex items-center max-w-md mx-auto gap-2">
           <input
             type="text"
             placeholder="搜索品牌、型号或系列..."
@@ -62,12 +54,17 @@ export default function Home() {
             className="flex-1 px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
           />
           <button
-            type="submit"
-            className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl transition-colors text-sm"
+            type="button"
+            onClick={() => {
+              document
+                .getElementById("tractor-grid")
+                ?.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl transition-colors text-sm whitespace-nowrap"
           >
-            开始对比
+            浏览型号
           </button>
-        </form>
+        </div>
       </section>
 
       {/* Main Content */}
@@ -103,7 +100,7 @@ export default function Home() {
         </div>
 
         {/* Tractor Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div id="tractor-grid" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((t) => (
             <TractorCard key={t.id} tractor={t} />
           ))}
