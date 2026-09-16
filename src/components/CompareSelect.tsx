@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { tractors, brands, type Tractor } from "@/data/tractors";
+import { tractors, brands } from "@/data/tractors";
 import TractorCard from "./TractorCard";
 
 interface Props {

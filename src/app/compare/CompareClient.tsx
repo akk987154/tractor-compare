@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { tractors, compareFields } from "@/data/tractors";
 import CompareSelect from "@/components/CompareSelect";
@@ -15,23 +15,30 @@ interface Props {
   initialRight?: string;
 }
 
+/**
+ * URL 参数只作为查表键使用，必须能在静态数据集中命中。
+ * 这样渲染出来的值永远来自 tractors 数据，不会把查询串带进 DOM。
+ */
+function isValidTractorId(id?: string): id is string {
+  return !!id && tractors.some((t) => t.id === id);
+}
+
 export default function CompareClient({ initialLeft, initialRight }: Props) {
   const router = useRouter();
-  const [leftId, setLeftId] = useState<string | null>(null);
-  const [rightId, setRightId] = useState<string | null>(null);
-  const [initialized, setInitialized] = useState(false);
 
-  // 从 server props 初始化选中状态
-  useEffect(() => {
-    if (initialized) return;
-    if (initialLeft && tractors.some((t) => t.id === initialLeft)) {
-      setLeftId(initialLeft);
-    }
-    if (initialRight && tractors.some((t) => t.id === initialRight)) {
-      setRightId(initialRight);
-    }
-    setInitialized(true);
-  }, [initialLeft, initialRight, initialized]);
+  // 直接从 props 派生初始状态，而不是在 useEffect 里回填。
+  // 原写法把状态初始化放进了 useEffect，而 effect 在服务端不执行，
+  // 于是 SSR 阶段 bothSelected 恒为 false：/compare?left=xxx&right=yyy
+  // 这个 SEO 主打的深链接页面返回给爬虫的 HTML 是"请分别选择两台拖拉机"的空状态，
+  // 而不是参数表 / 雷达图 / 胜出分析。generateMetadata 却为同一 URL 输出了
+  // 独立的 title 与 description，元数据与正文内容互相矛盾。
+  // 改用 props 派生后 SSR 与首次客户端渲染结果一致，也不会产生 hydration 不匹配。
+  const [leftId, setLeftId] = useState<string | null>(() =>
+    isValidTractorId(initialLeft) ? initialLeft : null
+  );
+  const [rightId, setRightId] = useState<string | null>(() =>
+    isValidTractorId(initialRight) ? initialRight : null
+  );
 
   // 同步 URL 参数
   const updateURL = useCallback(
@@ -193,7 +200,7 @@ export default function CompareClient({ initialLeft, initialRight }: Props) {
             </h2>
             <p className="text-xs text-zinc-400 mb-4">
               以下展示每台拖拉机在各项参数上的领先情况，仅供参考。
-              更准确的推荐请查看上方"场景加权胜出分析"。
+              更准确的推荐请查看上方&ldquo;场景加权胜出分析&rdquo;。
             </p>
             <div className="grid grid-cols-2 gap-6">
               {([left!, right!] as const).map((tractor, ti) => {

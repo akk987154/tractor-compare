@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Tractor } from "@/data/tractors";
 import { tractors } from "@/data/tractors";
 import { judgeWinner, type UseCase } from "@/lib/winner";
@@ -23,12 +23,20 @@ export default function WinnerPanel({ left, right }: Props) {
   // 执行场景加权判定
   const { results, overall } = judgeWinner(left, right, tractors);
 
-  // 记录对比历史
-  useState(() => {
-    addHistory(left.id, right.id);
-  });
+  // 记录对比历史。
+  // 原实现写在 useState(() => { addHistory(...) }) 的初始化器里，有两个问题：
+  // 1) 渲染阶段产生副作用（React 要求 render 是纯的，严格模式下会执行两次）
+  // 2) 初始化器只在挂载时执行一次，而本组件在 JSX 中位置固定，
+  //    用户换机型后只重渲染、不重新挂载，导致"最近对比"只记录了第一对
+  useEffect(() => {
+    if (left.id !== right.id) addHistory(left.id, right.id);
+  }, [left.id, right.id]);
 
-  const current = results.find((r) => r.useCase === activeTab)!;
+  const current = results.find((r) => r.useCase === activeTab) ?? results[0];
+
+  // 权重表若与场景枚举不同步，这里会拿到 undefined。
+  // 原实现用 `!` 断言硬压过去，一旦不匹配就是整页崩溃且没有 error boundary 兜底
+  if (!current) return null;
 
   const scoreMax = Math.max(current.leftScore, current.rightScore, 0.1);
 
@@ -52,7 +60,7 @@ export default function WinnerPanel({ left, right }: Props) {
       {/* 场景 Tab 切换 */}
       <div className="flex border-b border-zinc-200 dark:border-zinc-700">
         {USE_CASE_TABS.map((tab) => {
-          const result = results.find((r) => r.useCase === tab.key)!;
+          const result = results.find((r) => r.useCase === tab.key);
           const isActive = activeTab === tab.key;
           return (
             <button
@@ -68,9 +76,9 @@ export default function WinnerPanel({ left, right }: Props) {
               {/* 小徽标：显示哪方胜出 */}
               <span
                 className={`ml-1.5 inline-block w-2 h-2 rounded-full ${
-                  result.winner === "left"
+                  result?.winner === "left"
                     ? "bg-green-500"
-                    : result.winner === "right"
+                    : result?.winner === "right"
                       ? "bg-blue-500"
                       : "bg-zinc-300 dark:bg-zinc-600"
                 }`}
@@ -150,8 +158,10 @@ export default function WinnerPanel({ left, right }: Props) {
           </p>
           <div className="space-y-2">
             {current.leftDetails.map((detail, i) => {
-              const rDetail = current.rightDetails[i];
-              const maxDetail = Math.max(detail.score, rDetail.score, 0.01);
+              // 两侧的明细数组理论上等长，但不能依赖这一点：原实现直接下标取值，
+              // 长度不一致时会读到 undefined 并在 .score / .toFixed() 上崩溃
+              const rScore = current.rightDetails[i]?.score ?? 0;
+              const maxDetail = Math.max(detail.score, rScore, 0.01);
               return (
                 <div key={detail.field}>
                   <div className="flex justify-between text-xs mb-0.5">
@@ -176,12 +186,12 @@ export default function WinnerPanel({ left, right }: Props) {
                       <div
                         className="h-3 bg-blue-400 rounded-sm transition-all"
                         style={{
-                          width: `${(rDetail.score / maxDetail) * 50}%`,
+                          width: `${(rScore / maxDetail) * 50}%`,
                         }}
                       />
                     </div>
                     <span className="text-xs font-mono text-blue-600 dark:text-blue-400 w-10">
-                      {rDetail.score.toFixed(1)}
+                      {rScore.toFixed(1)}
                     </span>
                   </div>
                 </div>

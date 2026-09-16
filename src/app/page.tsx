@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { tractors, brands, categories } from "@/data/tractors";
+import { tractors, categories } from "@/data/tractors";
 import TractorCard from "@/components/TractorCard";
 import BrandFilter from "@/components/BrandFilter";
 

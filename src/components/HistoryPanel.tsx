@@ -19,6 +19,9 @@ export default function HistoryPanel({ onSelect }: Props) {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
 
   useEffect(() => {
+    // localStorage 只在浏览器可用，渲染期读取会导致 SSR 与首次客户端渲染不一致，
+    // 因此"挂载后读取再写入 state"是这里的正确做法。
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHistory(getHistory());
   }, []);
 

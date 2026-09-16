@@ -12,6 +12,10 @@ export default function Header() {
     const stored = localStorage.getItem("theme");
     if (stored === "dark" || (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
       document.documentElement.classList.add("dark");
+      // localStorage 在服务端不存在，只能在挂载后读取并把结果同步进 state。
+      // 这是 SSR 安全的标准写法：该 effect 只执行一次，且 layout.tsx 的内联脚本
+      // 已在首屏前设置好 dark class，这里只是让按钮的 state 与 DOM 对齐。
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDark(true);
     }
   }, []);

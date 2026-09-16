@@ -22,12 +22,18 @@ export function getHistory(): HistoryEntry[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
+    // 既校验形状，也校验取值确实存在于数据集中。
+    // localStorage 可以被用户或其它脚本改写，只校验 typeof 会放过任意字符串；
+    // 虽然当前调用链（resolveHistoryEntry → HistoryPanel → updateURL）都有兜底，
+    // 但在这里收口更稳妥，也避免以后新增消费方时忘记校验。
     return parsed.filter(
       (e) =>
         e &&
         typeof e.leftId === "string" &&
         typeof e.rightId === "string" &&
-        typeof e.timestamp === "number"
+        typeof e.timestamp === "number" &&
+        tractors.some((t) => t.id === e.leftId) &&
+        tractors.some((t) => t.id === e.rightId)
     );
   } catch {
     return [];
