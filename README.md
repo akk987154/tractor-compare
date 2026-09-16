@@ -7,12 +7,23 @@
   TractorWatch 的价格区间也交叉校验过这边的 MSRP 数据。
 -->
 
-[![Next.js 16](https://img.shields.io/badge/Next.js-16.2-000000?logo=nextdotjs)](https://nextjs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178c6?logo=typescript)](https://www.typescriptlang.org)
-[![Tailwind CSS 4](https://img.shields.io/badge/Tailwind-4.0-06b6d4?logo=tailwindcss)](https://tailwindcss.com)
-[![Recharts](https://img.shields.io/badge/Recharts-3.8-22b5bf)](https://recharts.org)
+[![Next.js 16](https://img.shields.io/badge/Next.js-16.3-000000?logo=nextdotjs)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6?logo=typescript)](https://www.typescriptlang.org)
+[![Tailwind CSS 4](https://img.shields.io/badge/Tailwind-4.3-06b6d4?logo=tailwindcss)](https://tailwindcss.com)
+[![Recharts](https://img.shields.io/badge/Recharts-3.10-22b5bf)](https://recharts.org)
 
 **TractorCompare** 是 [TractorTools](https://github.com/seb/tractor-tools) 生态的规格数据库与对比引擎。它也是整个工具集里最早启动的项目——其他工具的机型数据、品牌枚举、参数命名规范都从这里"长"出去的。目前收录了 17 台拖拉机、5 个品牌、4 个级别分类，支持并排对比 + 雷达图 + 智能胜出判定。
+
+## 📸 界面预览
+
+首页 —— 按品牌筛选、搜索、进入对比：
+
+![TractorCompare 首页](screenshots/home.png)
+
+对比页 —— 参数表、雷达图与场景加权胜出分析。
+这个页面同时是长尾搜索的落地页，支持 `?left=<机型>&right=<机型>` 深链接直接进入对比：
+
+![TractorCompare 对比页](screenshots/comparison.png)
 
 ---
 
