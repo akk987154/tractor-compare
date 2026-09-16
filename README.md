@@ -182,3 +182,14 @@ Next.js 16 · TypeScript · Tailwind CSS 4 · Recharts
 - [ ] 更多品牌（Fendt、Claas、McCormick）
 - [ ] 用户提交新机型数据
 - [ ] i18n 英文 / 西班牙语界面
+
+---
+
+## License / 许可证
+
+MIT License — see [LICENSE](./LICENSE).
+
+Copyright (c) 2026 akk987154
+
+本项目采用 MIT 许可证，详见 [LICENSE](./LICENSE)。
+你可以自由使用、修改、分发，包括商业用途，只需保留版权声明与许可声明。
